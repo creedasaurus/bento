@@ -45,6 +45,11 @@ jobs:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
+
+    env:
+      version: 1.0.0
+      major: 1
+      minor: 0
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -54,16 +59,16 @@ jobs:
     - name: Check Out Repo
       uses: actions/checkout@v4
 
-    - name: Free Disk Space (Ubuntu)
-      uses: jlumbroso/free-disk-space@v1.3.1
-      with:
-        tool-cache: false
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
+#    - name: Free Disk Space (Ubuntu)
+#      uses: jlumbroso/free-disk-space@v1.3.1
+#      with:
+#        tool-cache: false
+#        android: true
+#        dotnet: true
+#        haskell: true
+#        large-packages: true
+#        docker-images: true
+#        swap-storage: true
 
     - name: Log in to registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
@@ -95,15 +100,10 @@ jobs:
 #        tags: ${{ steps.docker_meta_cgo.outputs.tags }}
 
     - name: Docker meta
-      id: docker_meta
+      id: meta
       uses: docker/metadata-action@v5
       with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/bento
-        tags: |
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
+        images: ghcr.io/${{ github.repository_owner }}/bento
 
     - name: Build and push
       uses: docker/build-push-action@v6
